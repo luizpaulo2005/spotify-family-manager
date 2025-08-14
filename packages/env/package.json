@@ -1,0 +1,19 @@
+{
+  "name": "@spotify-family-manager/env",
+  "version": "0.0.0",
+  "main": "index.ts",
+  "dependencies": {
+    "@t3-oss/env-nextjs": "^0.13.8",
+    "zod": "^4.0.14"
+  },
+  "devDependencies": {
+    "@spotify-family-manager/eslint-config": "workspace:*",
+    "@spotify-family-manager/prettier": "workspace:*",
+    "@spotify-family-manager/tsconfig": "workspace:*",
+    "@types/node": "^24.2.0"
+  },
+  "prettier": "@spotify-family-manager/prettier",
+  "eslintConfig": {
+    "extends": "@spotify-family-manager/eslint-config/node"
+  }
+}

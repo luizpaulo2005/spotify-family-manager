@@ -1,0 +1,3 @@
+{
+    "extends": "@spotify-family-manager/tsconfig/node",
+}

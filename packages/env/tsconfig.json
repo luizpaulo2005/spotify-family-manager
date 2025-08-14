@@ -1,0 +1,6 @@
+{
+    "extends": "@spotify-family-manager/tsconfig/node.json",
+    "include": [
+      "index.ts"
+    ]
+  }

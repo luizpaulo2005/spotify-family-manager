@@ -1,0 +1,81 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters", "queryCompiler"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String  @id @default(uuid())
+  googleId  String? @unique
+  name      String
+  email     String  @unique
+  password  String?
+  avatarUrl String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  families   Family[]
+  membership FamilyMember[]
+
+  @@map("users")
+}
+
+enum PaymentMethod {
+  transfer
+  pix
+}
+
+model Family {
+  id            String        @id @default(uuid())
+  name          String
+  description   String?
+  maxMembers    Int
+  monthlyCost   Float
+  paymentMethod PaymentMethod
+  pixKey        String?
+  bankDetails   Json?
+
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id])
+
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  members   FamilyMember[]
+  invites   Invite[]
+
+  @@map("families")
+}
+
+model FamilyMember {
+  id       String   @id @default(uuid())
+  familyId String
+  userId   String
+  role     String   @default("member")
+  joinedAt DateTime @default(now())
+
+  family Family @relation(fields: [familyId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([familyId, userId])
+  @@map("family_members")
+}
+
+model Invite {
+  id    String @id @default(uuid())
+  email String
+  code  String @default(uuid())
+
+  familyId String
+  family   Family @relation(fields: [familyId], references: [id])
+
+  expiresAt DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  @@unique([familyId, email])
+  @@map("invites")
+}
