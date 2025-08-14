@@ -29,8 +29,6 @@ import { logger } from './routes/middlewares/logger.ts'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
-app.register(logger)
-
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
 
@@ -40,6 +38,8 @@ app.register(fastifyJwt, {
 })
 
 if (process.env.NODE_ENV === 'development') {
+  app.register(logger)
+
   app.register(fastifySwagger, {
     openapi: {
       info: {
