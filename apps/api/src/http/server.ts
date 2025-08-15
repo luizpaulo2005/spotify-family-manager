@@ -1,3 +1,4 @@
+import fastifyCookie from '@fastify/cookie'
 import fastifyCors from '@fastify/cors'
 import fastifyJwt from '@fastify/jwt'
 import fastifySwagger from '@fastify/swagger'
@@ -35,6 +36,15 @@ app.setValidatorCompiler(validatorCompiler)
 app.register(fastifyCors, { origin: '*' })
 app.register(fastifyJwt, {
   secret: env.JWT_SECRET,
+})
+app.register(fastifyCookie, {
+  secret: env.COOKIE_SECRET,
+  parseOptions: {
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days,
+    path: '/',
+    sameSite: 'strict',
+  },
 })
 
 if (process.env.NODE_ENV === 'development') {
