@@ -111,7 +111,9 @@ const authenticateWithGoogle = (app: FastifyInstance) => {
         },
       )
 
-      return reply.status(201).send({ token })
+      reply.setCookie('token', token)
+
+      return reply.status(201).send()
     },
   )
 }
