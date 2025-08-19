@@ -31,7 +31,7 @@ export default function RootLayout({
       <body>
         <ThemeProvider defaultTheme="system" enableSystem attribute="class">
           <div
-            className={`${outfitSans.variable} ${jetBrainsMono.variable} text-foreground p-2 antialiased`}
+            className={`${outfitSans.variable} ${jetBrainsMono.variable} text-foreground antialiased`}
           >
             <Toaster richColors />
             {children}
