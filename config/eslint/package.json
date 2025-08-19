@@ -4,7 +4,7 @@
   "private": true,
   "files": [
     "node.js",
-    "react.js"
+    "next.js"
   ],
   "devDependencies": {
     "@rocketseat/eslint-config": "^2.2.2",
@@ -13,6 +13,6 @@
   },
   "prettier": "@spotify-family-manager/prettier",
   "eslintConfig": {
-    "extends": "./react.js"
+    "extends": "./next.js"
   }
 }
