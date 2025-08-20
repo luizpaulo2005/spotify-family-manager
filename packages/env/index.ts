@@ -12,7 +12,9 @@ const env = createEnv({
     GOOGLE_OAUTH_CLIENT_SECRET: z.string(),
     GOOGLE_OAUTH_REDIRECT_URI: z.url(),
   },
-  client: {},
+  client: {
+    NEXT_PUBLIC_API_URL: z.url(),
+  },
   shared: {},
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
@@ -23,6 +25,7 @@ const env = createEnv({
     GOOGLE_OAUTH_CLIENT_ID: process.env.GOOGLE_OAUTH_CLIENT_ID,
     GOOGLE_OAUTH_CLIENT_SECRET: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
     GOOGLE_OAUTH_REDIRECT_URI: process.env.GOOGLE_OAUTH_REDIRECT_URI,
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   },
   emptyStringAsUndefined: true,
 })
