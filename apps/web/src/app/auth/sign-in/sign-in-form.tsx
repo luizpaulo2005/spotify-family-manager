@@ -11,14 +11,14 @@ const SignInForm = () => {
       <h2 className="text-2xl font-semibold">Entrar</h2>
       <div className="space-y-2">
         <Label>E-mail</Label>
-        <Input />
+        <Input type="email" />
       </div>
       <div className="space-y-2">
         <Label>Senha</Label>
         <Input type="password" />
       </div>
       <div className="flex items-center justify-between gap-2">
-        <Button className="flex-1" variant="secondary">
+        <Button className="flex-1" variant="secondary" asChild>
           <Link href="/auth/sign-up">Criar conta</Link>
         </Button>
         <Button className="flex-1">Entrar</Button>
