@@ -4,7 +4,7 @@ import { z } from 'zod'
 const env = createEnv({
   server: {
     DATABASE_URL: z.url(),
-    PORT: z.coerce.number().default(3333),
+    SERVER_PORT: z.coerce.number().default(3333),
     HOST: z.string(),
     JWT_SECRET: z.string(),
     COOKIE_SECRET: z.string(),
@@ -18,7 +18,7 @@ const env = createEnv({
   shared: {},
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
-    PORT: process.env.PORT,
+    SERVER_PORT: process.env.SERVER_PORT,
     HOST: process.env.HOST,
     JWT_SECRET: process.env.JWT_SECRET,
     COOKIE_SECRET: process.env.COOKIE_SECRET,

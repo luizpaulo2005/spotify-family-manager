@@ -94,11 +94,11 @@ app.register(getInvites)
 app.register(createInvite)
 app.register(rejectInvite)
 
-app.listen({ port: env.PORT, host: env.HOST }).then(() => {
-  console.log(`Server is running on http://${env.HOST}:${env.PORT}`)
+app.listen({ port: env.SERVER_PORT, host: env.HOST }).then(() => {
+  console.log(`Server is running on http://${env.HOST}:${env.SERVER_PORT}`)
   if (process.env.NODE_ENV === 'development') {
     console.log(
-      `API reference available at http://${env.HOST}:${env.PORT}/api-reference`,
+      `API reference available at http://${env.HOST}:${env.SERVER_PORT}/api-reference`,
     )
   }
 })
