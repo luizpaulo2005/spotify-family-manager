@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import { JetBrains_Mono as JetBrainsMono, Outfit } from 'next/font/google'
 
 import { Toaster } from '@/components/ui/sonner'
+import { ProgressProvider } from '@/providers/progress-bar'
 import { ThemeProvider } from '@/providers/theme'
 
 const outfitSans = Outfit({
@@ -33,8 +34,10 @@ export default function RootLayout({
           <div
             className={`${outfitSans.variable} ${jetBrainsMono.variable} text-foreground antialiased`}
           >
-            <Toaster richColors />
-            {children}
+            <ProgressProvider>
+              <Toaster richColors />
+              {children}
+            </ProgressProvider>
           </div>
         </ThemeProvider>
       </body>
