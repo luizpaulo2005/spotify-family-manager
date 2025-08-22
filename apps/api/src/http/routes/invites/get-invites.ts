@@ -23,10 +23,18 @@ const getInvites = (app: FastifyInstance) => {
                 z.object({
                   id: z.uuid(),
                   email: z.email(),
-                  familyId: z.uuid(),
                   code: z.uuid(),
                   expiresAt: z.date(),
                   createdAt: z.date(),
+                  family: z.object({
+                    id: z.uuid(),
+                    name: z.string(),
+                    owner: z.object({
+                      id: z.uuid(),
+                      name: z.string(),
+                      avatarUrl: z.url().nullable(),
+                    }),
+                  }),
                 }),
               ),
             }),
@@ -46,6 +54,21 @@ const getInvites = (app: FastifyInstance) => {
 
         const invites = await prisma.invite.findMany({
           where: { email: user.email },
+          include: {
+            family: {
+              select: {
+                id: true,
+                name: true,
+                owner: {
+                  select: {
+                    id: true,
+                    name: true,
+                    avatarUrl: true,
+                  },
+                },
+              },
+            },
+          },
         })
 
         return { invites }
