@@ -8,6 +8,12 @@ import { UnauthorizedError } from '../http/routes/_errors/unauthorized-error.ts'
 type FastifyErrorHandler = FastifyInstance['errorHandler']
 
 const errorHandler: FastifyErrorHandler = (error, request, reply) => {
+  if (process.env.NODE_ENV !== 'development') {
+    console.error(error)
+
+    return reply.status(500).send({ message: 'Erro interno do servidor.' })
+  }
+
   if (error instanceof BadRequestError) {
     return reply.status(400).send({
       message: error.message,
