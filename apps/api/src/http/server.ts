@@ -33,7 +33,10 @@ const app = fastify().withTypeProvider<ZodTypeProvider>()
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
 
-app.register(fastifyCors, { origin: '*' })
+app.register(fastifyCors, {
+  origin: env.WEB_URL,
+  credentials: true,
+})
 app.register(fastifyJwt, {
   secret: env.JWT_SECRET,
 })
