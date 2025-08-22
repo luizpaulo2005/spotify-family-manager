@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { HTTPError } from 'ky'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -27,9 +28,11 @@ const SignInForm = () => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<SignInFormProps>({
     resolver: zodResolver(signInSchema),
   })
+  const router = useRouter()
 
   const handleLogin = async ({ email, password }: SignInFormProps) => {
     try {
@@ -38,6 +41,9 @@ const SignInForm = () => {
       console.log(result)
 
       toast.success('Login realizado com sucesso!')
+
+      reset()
+      router.replace('/')
     } catch (error) {
       if (error instanceof HTTPError) {
         const err = await error.response.json()
