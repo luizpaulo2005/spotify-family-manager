@@ -4,6 +4,8 @@ import ky from 'ky'
 
 const api = ky.create({
   prefixUrl: env.NEXT_PUBLIC_API_URL,
+  credentials: 'include',
+  throwHttpErrors: true,
   hooks: {
     beforeRequest: [
       async (request) => {
