@@ -37,9 +37,6 @@ app.register(fastifyCors, {
   origin: env.WEB_URL,
   credentials: true,
 })
-app.register(fastifyJwt, {
-  secret: env.JWT_SECRET,
-})
 app.register(fastifyCookie, {
   secret: env.COOKIE_SECRET,
   parseOptions: {
@@ -48,6 +45,13 @@ app.register(fastifyCookie, {
     path: '/',
     sameSite: 'strict',
   },
+})
+app.register(fastifyJwt, {
+  cookie: {
+    cookieName: 'token',
+    signed: true,
+  },
+  secret: env.JWT_SECRET,
 })
 
 if (process.env.NODE_ENV === 'development') {
