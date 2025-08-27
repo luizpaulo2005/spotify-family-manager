@@ -1,9 +1,7 @@
-import { Plus } from 'lucide-react'
-
+import { CreateFamily } from './create-family'
 import { InvitesButton } from './invites-button'
 import { UserButton } from './profile-button'
 import { ToggleTheme } from './toggle-theme'
-import { Button } from './ui/button'
 
 const Navbar = () => {
   return (
@@ -12,10 +10,7 @@ const Navbar = () => {
       <div className="flex items-center gap-2">
         <ToggleTheme />
         <InvitesButton />
-        <Button size="sm" variant="secondary">
-          <Plus />
-          Nova família
-        </Button>
+        <CreateFamily />
         <UserButton />
       </div>
     </nav>
