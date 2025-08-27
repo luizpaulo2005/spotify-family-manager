@@ -1,5 +1,11 @@
+import { FamiliesList } from './families-list'
+
 const Page = () => {
-  return <div>Hello world!</div>
+  return (
+    <div>
+      <FamiliesList />
+    </div>
+  )
 }
 
 export default Page
