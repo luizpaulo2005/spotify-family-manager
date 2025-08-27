@@ -4,6 +4,7 @@ import { Loader2, LogOut } from 'lucide-react'
 
 import { getProfile } from '@/http/get-profile'
 
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Button } from './ui/button'
 import {
   DropdownMenu,
@@ -36,6 +37,13 @@ const UserButton = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button size="sm" variant="secondary">
+          <Avatar className="size-5">
+            <AvatarFallback>{user.name?.[0] ?? 'U'}</AvatarFallback>
+            <AvatarImage
+              src={user.image || undefined}
+              alt={user.name ?? 'User'}
+            />
+          </Avatar>
           {user.name}
         </Button>
       </DropdownMenuTrigger>
