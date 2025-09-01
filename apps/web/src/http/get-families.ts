@@ -32,6 +32,7 @@ interface GetUserFamiliesResponse {
       payments: Array<{
         id: string
         amount: number
+        memberId: string
         createdAt: Date
       }>
     }>

@@ -6,7 +6,6 @@ import {
   Clock,
   CreditCard,
   Loader2,
-  Users,
 } from 'lucide-react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -22,6 +21,8 @@ import {
 import { Progress } from '@/components/ui/progress'
 import { getUserFamilies } from '@/http/get-families'
 import { dayjs } from '@/lib/dayjs'
+
+import { MembersDialog } from './members-dialog'
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -80,6 +81,26 @@ const FamiliesList = () => {
           (member) => member.user.id === userId,
         )
         const userRole = currentMember?.role ?? 'member'
+        const userShare = family.monthlyCost / family.members.length
+
+        const today = dayjs()
+        const dueDate = dayjs().date(family.dueDay)
+
+        const hasPaidThisMonth = currentMember?.payments.some(
+          (payment) =>
+            dayjs(payment.createdAt).isSame(today, 'month') &&
+            dayjs(payment.createdAt).isSame(today, 'year'),
+        )
+
+        let paymentStatus: 'paid' | 'pending' | 'overdue' = 'pending'
+
+        if (hasPaidThisMonth) {
+          paymentStatus = 'paid'
+        } else if (today.isAfter(dueDate)) {
+          paymentStatus = 'overdue'
+        } else {
+          paymentStatus = 'pending'
+        }
 
         return (
           <Card key={family.id}>
@@ -108,15 +129,15 @@ const FamiliesList = () => {
                 <div className="text-left sm:text-right">
                   <div className="flex items-center gap-2">
                     <div
-                    // className={`h-2 w-2 rounded-full ${getStatusColor(family.paymentStatus)}`}
+                      className={`h-2 w-2 rounded-full ${getStatusColor(paymentStatus)}`}
                     />
-                    {/* {getStatusIcon(family.paymentStatus)} */}
+                    {getStatusIcon(paymentStatus)}
                     <span className="text-sm font-medium">
-                      {/* {family.paymentStatus === 'paid'
-                      ? 'Pago'
-                      : family.paymentStatus === 'pending'
-                        ? 'Pendente'
-                        : 'Atrasado'} */}
+                      {paymentStatus === 'paid'
+                        ? 'Pago'
+                        : paymentStatus === 'pending'
+                          ? 'Pendente'
+                          : 'Atrasado'}
                     </span>
                   </div>
                   <p className="text-xs text-gray-500">
@@ -136,7 +157,12 @@ const FamiliesList = () => {
                 <div className="text-center sm:text-left">
                   <p className="text-sm text-gray-600">Sua Parte</p>
                   <p className="text-lg font-bold sm:text-xl">
-                    {/* R$ {family.userShare.toFixed(2)} */}
+                    {(
+                      family.monthlyCost / family.members.length
+                    ).toLocaleString('pt-br', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    })}
                   </p>
                 </div>
                 <div className="text-center sm:text-left">
@@ -154,26 +180,22 @@ const FamiliesList = () => {
               </div>
 
               <div className="flex flex-col gap-2 sm:flex-row">
-                {/* {family.paymentStatus !== 'paid' && (
-                <Button
-                  onClick={() => setPaymentOpen(true)}
-                  size="sm"
-                  className="w-full sm:w-auto"
-                >
-                  <CreditCard className="mr-2 size-4" />
-                  Pagar R$ {family.userShare.toFixed(2)}
-                </Button>
-              )}
-              {family.userRole === 'admin' && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full bg-transparent sm:w-auto"
-                >
-                  <Users className="mr-2 size-4" />
-                  Gerenciar Membros
-                </Button>
-              )} */}
+                {!hasPaidThisMonth && (
+                  <Button size="sm" className="w-full sm:w-auto">
+                    <CreditCard className="mr-2 size-4" />
+                    Pagar{' '}
+                    {userShare.toLocaleString('pt-br', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    })}
+                  </Button>
+                )}
+                {userRole === 'admin' && (
+                  <MembersDialog
+                    currentMember={currentMember!}
+                    members={family.members}
+                  />
+                )}
               </div>
             </CardContent>
           </Card>

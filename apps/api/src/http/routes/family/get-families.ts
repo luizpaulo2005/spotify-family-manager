@@ -51,6 +51,7 @@ const getFamilies = (app: FastifyInstance) => {
                         z.object({
                           id: z.uuid(),
                           amount: z.number().positive(),
+                          memberId: z.uuid(),
                           createdAt: z.date(),
                         }),
                       ),
@@ -90,6 +91,7 @@ const getFamilies = (app: FastifyInstance) => {
                 payments: {
                   select: {
                     id: true,
+                    memberId: true,
                     amount: true,
                     createdAt: true,
                   },
