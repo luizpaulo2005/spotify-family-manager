@@ -39,6 +39,10 @@ const createFamilySchema = z.discriminatedUnion('paymentMethod', [
     description: z.string().nullable(),
     maxMembers: z.number().int().positive().min(2).max(10),
     monthlyCost: z.number().positive(),
+    dueDay: z.coerce
+      .number({ error: 'Dia de vencimento é obrigatório' })
+      .min(1, { error: 'Dia de vencimento deve ser pelo menos 1' })
+      .max(31, { error: 'Dia de vencimento deve ser no máximo 31' }),
     pixKey: z
       .string({ error: 'Chave Pix é obrigatória' })
       .nonempty({ error: 'Chave Pix é obrigatória' }),
@@ -53,6 +57,10 @@ const createFamilySchema = z.discriminatedUnion('paymentMethod', [
     description: z.string().nullable(),
     maxMembers: z.number().int().positive().min(2).max(10),
     monthlyCost: z.number().positive(),
+    dueDay: z.coerce
+      .number({ error: 'Dia de vencimento é obrigatório' })
+      .min(1, { error: 'Dia de vencimento deve ser pelo menos 1' })
+      .max(31, { error: 'Dia de vencimento deve ser no máximo 31' }),
     pixKey: z.undefined(),
     bankDetails: z.object({
       bankName: z.string().nonempty({ message: 'Banco é obrigatório' }),
@@ -79,6 +87,7 @@ const CreateFamily = () => {
     watch,
     formState: { errors },
   } = useForm<z.infer<typeof createFamilySchema>>({
+    // @ts-expect-error zod type conflict
     resolver: zodResolver(createFamilySchema),
   })
 
@@ -88,7 +97,7 @@ const CreateFamily = () => {
     setIsLoading(true)
 
     try {
-      // @ts-expect-error zod type not matches
+      // @ts-expect-error zod type conflict
       await createFamily(data)
       toast.success('Família criada com sucesso!')
       queryClient.invalidateQueries({ queryKey: ['families'] })
@@ -118,6 +127,7 @@ const CreateFamily = () => {
             Crie uma nova família para gerenciar os membros.
           </DialogDescription>
         </DialogHeader>
+        {/* @ts-expect-error zod type conflict */}
         <form onSubmit={handleSubmit(handleCreateFamily)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Nome da família</Label>
@@ -175,7 +185,30 @@ const CreateFamily = () => {
               </p>
             )}
           </div>
-
+          <div className="space-y-2">
+            <Label htmlFor="dueDate">Data de Vencimento</Label>
+            <Controller
+              control={control}
+              name="dueDay"
+              render={({ field }) => (
+                <Select
+                  onValueChange={(val) => field.onChange(Number(val))}
+                  value={field.value ? String(field.value) : undefined}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Selecione o dia de vencimento" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: 31 }, (_, i) => (
+                      <SelectItem key={i} value={String(i + 1)}>
+                        {i + 1}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </div>
           <div className="space-y-2">
             <Label htmlFor="monthlyCost">Custo mensal</Label>
             <Input

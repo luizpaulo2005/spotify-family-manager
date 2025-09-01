@@ -36,6 +36,7 @@ model Family {
   description   String?
   maxMembers    Int
   monthlyCost   Float
+  dueDay        Int
   paymentMethod PaymentMethod
   pixKey        String?
   bankDetails   Json?
@@ -61,8 +62,23 @@ model FamilyMember {
   family Family @relation(fields: [familyId], references: [id])
   user   User   @relation(fields: [userId], references: [id])
 
+  payments Payment[]
+
   @@unique([familyId, userId])
   @@map("family_members")
+}
+
+model Payment {
+  id       String @id @default(uuid())
+  memberId String
+  amount   Float
+  status   String @default("pending")
+
+  createdAt DateTime @default(now())
+
+  member FamilyMember @relation(fields: [memberId], references: [id])
+
+  @@map("payments")
 }
 
 model Invite {

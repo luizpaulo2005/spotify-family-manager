@@ -26,6 +26,7 @@ const updateFamily = (app: FastifyInstance) => {
             description: z.string().optional(),
             maxMembers: z.number().int().positive().min(2).max(10).optional(),
             monthlyCost: z.number().positive().optional(),
+            dueDay: z.int().min(1).max(31).optional(),
             paymentMethod: z.enum(['transfer', 'pix']).optional(),
             pixKey: z.string().optional(),
             bankDetails: bankDetailsSchema.optional(),

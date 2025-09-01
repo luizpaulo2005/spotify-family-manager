@@ -5,6 +5,7 @@ interface CreateFamilyRequest {
   name: string
   maxMembers: number
   monthlyCost: number
+  dueDay: number
   paymentMethod: 'pix' | 'transfer'
   pixKey: string | null
   bankDetails: {
@@ -13,10 +14,6 @@ interface CreateFamilyRequest {
     agencyNumber: string
     accountType: 'corrente' | 'poupança'
   } | null
-  id: string
-  createdAt: Date
-  updatedAt: Date
-  ownerId: string
 }
 
 const createFamily = async (data: CreateFamilyRequest) => {

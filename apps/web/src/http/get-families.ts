@@ -1,11 +1,14 @@
 import { api } from './client'
 
 interface GetUserFamiliesResponse {
+  userId: string
   families: Array<{
     id: string
     name: string
     description: string | null
     maxMembers: number
+    monthlyCost: number
+    dueDay: number
     paymentMethod: 'pix' | 'transfer'
     pixKey: string | null
     bankDetails: {
@@ -26,6 +29,11 @@ interface GetUserFamiliesResponse {
         name: string
         avatarUrl: string | null
       }
+      payments: Array<{
+        id: string
+        amount: number
+        createdAt: Date
+      }>
     }>
   }>
 }

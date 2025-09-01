@@ -19,12 +19,15 @@ const getFamilies = (app: FastifyInstance) => {
           security: [{ bearerAuth: [] }],
           response: {
             200: z.object({
+              userId: z.uuid(),
               families: z.array(
                 z.object({
                   id: z.uuid(),
                   name: z.string(),
                   description: z.string().nullable(),
-                  maxMembers: z.number().int(),
+                  maxMembers: z.int(),
+                  monthlyCost: z.number().positive(),
+                  dueDay: z.int(),
                   paymentMethod: z.enum(['transfer', 'pix']),
                   pixKey: z.string().nullable(),
                   bankDetails: z
@@ -44,6 +47,13 @@ const getFamilies = (app: FastifyInstance) => {
                         name: z.string(),
                         avatarUrl: z.url().nullable(),
                       }),
+                      payments: z.array(
+                        z.object({
+                          id: z.uuid(),
+                          amount: z.number().positive(),
+                          createdAt: z.date(),
+                        }),
+                      ),
                     }),
                   ),
                 }),
@@ -77,6 +87,13 @@ const getFamilies = (app: FastifyInstance) => {
                     avatarUrl: true,
                   },
                 },
+                payments: {
+                  select: {
+                    id: true,
+                    amount: true,
+                    createdAt: true,
+                  },
+                },
               },
             },
           },
@@ -85,7 +102,7 @@ const getFamilies = (app: FastifyInstance) => {
           },
         })
 
-        return { families }
+        return { userId, families }
       },
     )
 }
