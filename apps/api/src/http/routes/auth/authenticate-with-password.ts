@@ -56,7 +56,7 @@ const authenticateWithPassword = (app: FastifyInstance) => {
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
         path: '/',
-        sameSite: 'strict',
+        sameSite: 'none',
         signed: true,
       })
 

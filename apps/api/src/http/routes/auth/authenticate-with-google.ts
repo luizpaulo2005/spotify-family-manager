@@ -111,7 +111,13 @@ const authenticateWithGoogle = (app: FastifyInstance) => {
         },
       )
 
-      reply.setCookie('token', token)
+      reply.setCookie('token', token, {
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+        path: '/',
+        sameSite: 'none',
+        signed: true,
+      })
 
       return reply.status(201).send()
     },
