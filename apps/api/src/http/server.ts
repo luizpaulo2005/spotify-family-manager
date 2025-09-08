@@ -40,8 +40,6 @@ app.setValidatorCompiler(validatorCompiler)
 app.register(fastifyCors, {
   origin: env.WEB_URL,
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
 })
 app.register(fastifyCookie, {
   secret: env.COOKIE_SECRET,
@@ -50,7 +48,7 @@ app.register(fastifyCookie, {
     maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days,
     path: '/',
     sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
-    secure: env.NODE_ENV === 'production',
+    secure: true,
   },
 })
 app.register(fastifyJwt, {
