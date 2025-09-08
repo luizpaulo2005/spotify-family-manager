@@ -28,6 +28,9 @@ import { createInvite } from './routes/invites/create-invite.ts'
 import { getInvites } from './routes/invites/get-invites.ts'
 import { rejectInvite } from './routes/invites/reject-invite.ts'
 import { logger } from './routes/middlewares/logger.ts'
+import { createPayment } from './routes/payments/create-payment.ts'
+import { getPaymentHistory } from './routes/payments/get-payment-history.ts'
+import { reversePayment } from './routes/payments/reverse-payment.ts'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -37,6 +40,7 @@ app.setValidatorCompiler(validatorCompiler)
 app.register(fastifyCors, {
   origin: env.WEB_URL,
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
 })
 app.register(fastifyCookie, {
   secret: env.COOKIE_SECRET,
@@ -102,6 +106,10 @@ app.register(getInvites)
 app.register(createInvite)
 app.register(acceptInvite)
 app.register(rejectInvite)
+
+app.register(createPayment)
+app.register(getPaymentHistory)
+app.register(reversePayment)
 
 app.listen({ port: env.SERVER_PORT, host: env.HOST }).then(() => {
   console.log(`Server is running on http://${env.HOST}:${env.SERVER_PORT}`)

@@ -97,6 +97,11 @@ const getFamilies = (app: FastifyInstance) => {
                   },
                 },
                 payments: {
+                  where: {
+                    status: {
+                      not: 'reversed', // Não incluir pagamentos estornados
+                    },
+                  },
                   select: {
                     id: true,
                     memberId: true,

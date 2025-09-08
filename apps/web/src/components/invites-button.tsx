@@ -30,10 +30,14 @@ const InvitesButton = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invites'] })
       queryClient.invalidateQueries({ queryKey: ['families'] })
-      toast.success('Convite aceito com sucesso!')
+      toast.success('Convite aceito com sucesso!', {
+        description: 'Você agora é membro da família.',
+      })
     },
     onError: () => {
-      toast.error('Erro ao aceitar convite')
+      toast.error('Erro ao aceitar convite', {
+        description: 'Tente novamente em alguns momentos.',
+      })
     },
   })
 
@@ -41,10 +45,14 @@ const InvitesButton = () => {
     mutationFn: rejectInvite,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invites'] })
-      toast.success('Convite recusado com sucesso!')
+      toast.success('Convite recusado', {
+        description: 'O convite foi removido da sua lista.',
+      })
     },
     onError: () => {
-      toast.error('Erro ao recusar convite')
+      toast.error('Erro ao recusar convite', {
+        description: 'Tente novamente em alguns momentos.',
+      })
     },
   })
 

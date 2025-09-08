@@ -1,12 +1,14 @@
 'use client'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   AlertCircle,
   CheckCircle,
   Clock,
   CreditCard,
   Loader2,
+  Undo2,
 } from 'lucide-react'
+import { toast } from 'sonner'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -19,7 +21,9 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
+import { createPayment } from '@/http/create-payment'
 import { getUserFamilies } from '@/http/get-families'
+import { reversePayment } from '@/http/reverse-payment'
 import { dayjs } from '@/lib/dayjs'
 
 import { MembersDialog } from './members-dialog'
@@ -51,10 +55,60 @@ const getStatusIcon = (status: string) => {
 }
 
 const FamiliesList = () => {
+  const queryClient = useQueryClient()
+
   const { data, isLoading } = useQuery({
     queryKey: ['families'],
     queryFn: getUserFamilies,
   })
+
+  const paymentMutation = useMutation({
+    mutationFn: createPayment,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['families'] })
+      toast.success('Pagamento realizado com sucesso!', {
+        description: `Pagamento de ${variables.amount.toLocaleString('pt-br', {
+          style: 'currency',
+          currency: 'BRL',
+        })} processado e registrado.`,
+      })
+    },
+    onError: (error) => {
+      console.error('Erro ao processar pagamento:', error)
+      toast.error('Erro ao processar pagamento', {
+        description: 'Tente novamente em alguns momentos.',
+      })
+    },
+  })
+
+  const reversePaymentMutation = useMutation({
+    mutationFn: reversePayment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['families'] })
+      toast.success('Pagamento estornado com sucesso!', {
+        description: 'O valor foi estornado e você pode pagar novamente.',
+      })
+    },
+    onError: (error) => {
+      console.error('Erro ao estornar pagamento:', error)
+      toast.error('Erro ao estornar pagamento', {
+        description: 'Verifique se o pagamento pode ser estornado.',
+      })
+    },
+  })
+
+  const handlePayment = (familyId: string, amount: number) => {
+    paymentMutation.mutate({
+      familyId,
+      amount,
+    })
+  }
+
+  const handleReversePayment = (paymentId: string) => {
+    reversePaymentMutation.mutate({
+      paymentId,
+    })
+  }
 
   if (isLoading) {
     return (
@@ -91,6 +145,16 @@ const FamiliesList = () => {
             dayjs(payment.createdAt).isSame(today, 'month') &&
             dayjs(payment.createdAt).isSame(today, 'year'),
         )
+
+        // Verificar se existe um pagamento que pode ser estornado (últimos 7 dias)
+        const recentPayment = currentMember?.payments.find(
+          (payment) =>
+            dayjs(payment.createdAt).isSame(today, 'month') &&
+            dayjs(payment.createdAt).isSame(today, 'year') &&
+            dayjs().diff(dayjs(payment.createdAt), 'day') <= 7,
+        )
+
+        const canReversePayment = recentPayment && hasPaidThisMonth
 
         let paymentStatus: 'paid' | 'pending' | 'overdue' = 'pending'
 
@@ -181,17 +245,38 @@ const FamiliesList = () => {
 
               <div className="flex flex-col gap-2 sm:flex-row">
                 {!hasPaidThisMonth && (
-                  <Button size="sm" className="w-full sm:w-auto">
+                  <Button
+                    size="sm"
+                    className="w-full sm:w-auto"
+                    onClick={() => handlePayment(family.id, userShare)}
+                    disabled={paymentMutation.isPending}
+                  >
                     <CreditCard className="mr-2 size-4" />
-                    Pagar{' '}
-                    {userShare.toLocaleString('pt-br', {
-                      style: 'currency',
-                      currency: 'BRL',
-                    })}
+                    {paymentMutation.isPending
+                      ? 'Processando...'
+                      : `Pagar ${userShare.toLocaleString('pt-br', {
+                          style: 'currency',
+                          currency: 'BRL',
+                        })}`}
+                  </Button>
+                )}
+                {canReversePayment && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full sm:w-auto"
+                    onClick={() => handleReversePayment(recentPayment!.id)}
+                    disabled={reversePaymentMutation.isPending}
+                  >
+                    <Undo2 className="mr-2 size-4" />
+                    {reversePaymentMutation.isPending
+                      ? 'Estornando...'
+                      : 'Estornar Pagamento'}
                   </Button>
                 )}
                 {userRole === 'admin' && (
                   <MembersDialog
+                    familyId={family.id}
                     currentMember={currentMember!}
                     members={family.members}
                     invites={family.invites}

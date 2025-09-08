@@ -99,12 +99,16 @@ const CreateFamily = () => {
     try {
       // @ts-expect-error zod type conflict
       await createFamily(data)
-      toast.success('Família criada com sucesso!')
+      toast.success('Família criada com sucesso!', {
+        description: `"${data.name}" foi criada e você é o administrador.`,
+      })
       queryClient.invalidateQueries({ queryKey: ['families'] })
       setIsOpen(false)
     } catch (error) {
       console.error(error)
-      toast.error('Erro ao criar família')
+      toast.error('Erro ao criar família', {
+        description: 'Verifique os dados e tente novamente.',
+      })
     } finally {
       setIsLoading(false)
     }

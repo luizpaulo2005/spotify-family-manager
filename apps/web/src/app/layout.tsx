@@ -35,7 +35,12 @@ export default function RootLayout({
             className={`${outfitSans.variable} ${jetBrainsMono.variable} text-foreground antialiased`}
           >
             <ProgressProvider>
-              <Toaster richColors />
+              <Toaster
+                richColors
+                position="top-right"
+                expand={true}
+                duration={4000}
+              />
               {children}
             </ProgressProvider>
           </div>
