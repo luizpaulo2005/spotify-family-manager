@@ -36,6 +36,12 @@ interface GetUserFamiliesResponse {
         createdAt: Date
       }>
     }>
+    invites: Array<{
+      id: string
+      email: string
+      createdAt: Date
+      expiresAt: Date
+    }>
   }>
 }
 

@@ -57,6 +57,14 @@ const getFamilies = (app: FastifyInstance) => {
                       ),
                     }),
                   ),
+                  invites: z.array(
+                    z.object({
+                      id: z.uuid(),
+                      email: z.email(),
+                      createdAt: z.date(),
+                      expiresAt: z.date(),
+                    }),
+                  ),
                 }),
               ),
             }),
@@ -96,6 +104,14 @@ const getFamilies = (app: FastifyInstance) => {
                     createdAt: true,
                   },
                 },
+              },
+            },
+            invites: {
+              select: {
+                id: true,
+                email: true,
+                createdAt: true,
+                expiresAt: true,
               },
             },
           },

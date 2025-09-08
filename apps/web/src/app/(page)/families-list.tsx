@@ -194,6 +194,7 @@ const FamiliesList = () => {
                   <MembersDialog
                     currentMember={currentMember!}
                     members={family.members}
+                    invites={family.invites}
                   />
                 )}
               </div>
