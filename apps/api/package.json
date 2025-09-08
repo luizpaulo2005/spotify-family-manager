@@ -10,7 +10,7 @@
     "db:studio": "pnpm env:load prisma studio",
     "db:generate": "pnpm env:load prisma generate",
     "db:migrate": "pnpm env:load prisma migrate dev",
-    "postinstall": "pnpm env:load prisma generate"
+    "postinstall": "prisma generate"
   },
   "author": "",
   "license": "ISC",
