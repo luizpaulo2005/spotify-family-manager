@@ -36,9 +36,7 @@ const SignInForm = () => {
 
   const handleLogin = async ({ email, password }: SignInFormProps) => {
     try {
-      const result = await authenticateWithPassword({ email, password })
-
-      console.log(result)
+      await authenticateWithPassword({ email, password })
 
       toast.success('Login realizado com sucesso!')
 

@@ -40,6 +40,8 @@ app.setValidatorCompiler(validatorCompiler)
 app.register(fastifyCors, {
   origin: env.WEB_URL,
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
 })
 app.register(fastifyCookie, {
   secret: env.COOKIE_SECRET,
@@ -48,13 +50,13 @@ app.register(fastifyCookie, {
     maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days,
     path: '/',
     sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
-    secure: true,
+    secure: env.NODE_ENV === 'production',
   },
 })
 app.register(fastifyJwt, {
   cookie: {
     cookieName: 'token',
-    signed: true,
+    signed: false, // Não usar cookies assinados para compatibilidade com Next.js
   },
   secret: env.JWT_SECRET,
 })

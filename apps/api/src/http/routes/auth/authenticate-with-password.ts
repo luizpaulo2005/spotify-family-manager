@@ -59,7 +59,7 @@ const authenticateWithPassword = (app: FastifyInstance) => {
         path: '/',
         sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
         secure: env.NODE_ENV === 'production',
-        signed: true,
+        signed: false, // Não assinar o cookie para compatibilidade com Next.js
       })
 
       return reply.status(201).send()
