@@ -38,25 +38,39 @@ app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
 
 app.register(fastifyCors, {
-  origin: env.WEB_URL,
+  origin: (origin, callback) => {
+    // Lista de origens permitidas (incluindo desenvolvimento)
+    const allowedOrigins = [
+      env.WEB_URL, // URL do Vercel
+      'http://localhost:3000', // Desenvolvimento local
+      'http://127.0.0.1:3000', // Desenvolvimento local alternativo
+    ]
+    
+    // Permitir requisições sem origin (mobile apps, Postman, etc.)
+    if (!origin) {
+      callback(null, true)
+      return
+    }
+    
+    // Verificar se a origem está na lista permitida
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error(`Origin ${origin} not allowed by CORS`), false)
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+  optionsSuccessStatus: 200,
 })
 app.register(fastifyCookie, {
   secret: env.COOKIE_SECRET,
-  parseOptions: {
-    httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days,
-    path: '/',
-    sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
-    secure: env.NODE_ENV === 'production',
-  },
 })
 app.register(fastifyJwt, {
   cookie: {
     cookieName: 'token',
-    signed: false, // Não usar cookies assinados para compatibilidade com Next.js
+    signed: false,
   },
   secret: env.JWT_SECRET,
 })

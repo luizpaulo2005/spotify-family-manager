@@ -1,4 +1,3 @@
-import { env } from '@spotify-family-manager/env'
 import { compare } from 'bcryptjs'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
@@ -53,16 +52,20 @@ const authenticateWithPassword = (app: FastifyInstance) => {
         { sign: { expiresIn: '7d' } },
       )
 
-      reply.setCookie('token', token, {
+      // Configurações de cookie otimizadas para Vercel + Render
+      const cookieOptions = {
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
         path: '/',
-        sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
-        secure: env.NODE_ENV === 'production',
-        signed: false, // Não assinar o cookie para compatibilidade com Next.js
-      })
+        signed: false,
+        // Para cross-origin (Vercel + Render), sempre usar sameSite: 'none' com secure
+        sameSite: 'none' as const,
+        secure: true, // Sempre true para HTTPS em produção
+      }
 
-      return reply.status(201).send()
+      reply.setCookie('token', token, cookieOptions)
+
+      return reply.status(201).send({ token })
     },
   )
 }
