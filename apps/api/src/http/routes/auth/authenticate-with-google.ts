@@ -1,7 +1,7 @@
 import { env } from '@spotify-family-manager/env'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import z from 'zod'
+import { z } from 'zod'
 
 import { prisma } from '../../../lib/prisma.ts'
 import { BadRequestError } from '../_errors/bad-request-error.ts'
