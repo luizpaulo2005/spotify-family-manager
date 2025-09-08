@@ -59,7 +59,7 @@ model FamilyMember {
   role     String   @default("member")
   joinedAt DateTime @default(now())
 
-  family Family @relation(fields: [familyId], references: [id])
+  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   user   User   @relation(fields: [userId], references: [id])
 
   payments Payment[]
@@ -76,7 +76,7 @@ model Payment {
 
   createdAt DateTime @default(now())
 
-  member FamilyMember @relation(fields: [memberId], references: [id])
+  member FamilyMember @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("payments")
 }
@@ -87,7 +87,7 @@ model Invite {
   code  String @default(uuid())
 
   familyId String
-  family   Family @relation(fields: [familyId], references: [id])
+  family   Family @relation(fields: [familyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   expiresAt DateTime @default(now())
   createdAt DateTime @default(now())
