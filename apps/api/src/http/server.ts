@@ -23,6 +23,7 @@ import { removeMember } from './routes/family/remove-member.ts'
 import { transferOwnership } from './routes/family/transfer-ownership.ts'
 import { updateFamily } from './routes/family/update-family.ts'
 import { checkHealth } from './routes/health.ts'
+import { acceptInvite } from './routes/invites/accept-invite.ts'
 import { createInvite } from './routes/invites/create-invite.ts'
 import { getInvites } from './routes/invites/get-invites.ts'
 import { rejectInvite } from './routes/invites/reject-invite.ts'
@@ -99,6 +100,7 @@ app.register(transferOwnership)
 
 app.register(getInvites)
 app.register(createInvite)
+app.register(acceptInvite)
 app.register(rejectInvite)
 
 app.listen({ port: env.SERVER_PORT, host: env.HOST }).then(() => {

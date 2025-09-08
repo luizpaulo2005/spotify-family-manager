@@ -3,9 +3,9 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import z from 'zod'
 
 import { prisma } from '../../../lib/prisma.ts'
+import { BadRequestError } from '../_errors/bad-request-error.ts'
 import { UnauthorizedError } from '../_errors/unauthorized-error.ts'
 import { auth } from '../middlewares/auth.ts'
-import { BadRequestError } from '../_errors/bad-request-error.ts'
 
 const removeMember = (app: FastifyInstance) => {
   app

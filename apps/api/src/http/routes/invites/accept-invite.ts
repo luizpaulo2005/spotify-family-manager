@@ -5,15 +5,13 @@ import z from 'zod'
 import { prisma } from '../../../lib/prisma.ts'
 import { UnauthorizedError } from '../_errors/unauthorized-error.ts'
 
-const rejectInvite = (app: FastifyInstance) => {
+const acceptInvite = (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().patch(
-    '/invites/:id/reject',
+    '/invites/:id/accept',
     {
       schema: {
         tags: ['invites'],
-        summary: 'Reject/revoke an invite',
-        description:
-          'Allows invite recipient to reject or family admin to revoke an invite',
+        summary: 'Accept an invite',
         security: [{ bearerAuth: [] }],
         params: z.object({
           id: z.uuid(),
@@ -37,41 +35,44 @@ const rejectInvite = (app: FastifyInstance) => {
       const { id } = request.params
 
       const invite = await prisma.invite.findUnique({
-        where: { id },
-        include: {
-          family: {
-            include: {
-              members: {
-                where: { userId },
-                select: { role: true },
-              },
-            },
-          },
-        },
+        where: { id, email: user.email },
       })
 
       if (!invite) {
         throw new UnauthorizedError('Invite not found')
       }
 
-      // Check if user is the invite recipient or a family admin
-      const isInviteRecipient = invite.email === user.email
-      const familyMember = invite.family.members[0]
-      const isAdmin = familyMember?.role === 'admin'
-
-      if (!isInviteRecipient && !isAdmin) {
-        throw new UnauthorizedError(
-          'User is not authorized to reject this invite',
-        )
+      if (invite.email !== user.email) {
+        throw new UnauthorizedError('User is not the owner of the invite')
       }
 
-      await prisma.invite.delete({
-        where: { id: invite.id },
+      // Check if user is already a member
+      const existingMember = await prisma.familyMember.findUnique({
+        where: { familyId_userId: { familyId: invite.familyId, userId } },
       })
+
+      if (existingMember) {
+        throw new UnauthorizedError('User is already a member of this family')
+      }
+
+      // Create the family member and delete the invite in a transaction
+      await prisma.$transaction([
+        prisma.familyMember.create({
+          data: {
+            familyId: invite.familyId,
+            userId,
+            role: 'member',
+            joinedAt: new Date(),
+          },
+        }),
+        prisma.invite.delete({
+          where: { id: invite.id },
+        }),
+      ])
 
       return reply.status(204).send()
     },
   )
 }
 
-export { rejectInvite }
+export { acceptInvite }
