@@ -7,6 +7,7 @@
   "scripts": {
     "env:load": "dotenv -e ../../.env --",
     "build": "tsup",
+    "start": "pnpm env:load node dist/http/server.js",
     "dev": "pnpm env:load node --experimental-strip-types --no-warnings --watch src/http/server.ts",
     "db:studio": "pnpm env:load prisma studio",
     "db:generate": "pnpm env:load prisma generate",
