@@ -5,6 +5,7 @@ import { z } from 'zod'
 
 import { prisma } from '../../../lib/prisma.ts'
 import { BadRequestError } from '../_errors/bad-request-error.ts'
+import { env } from '@spotify-family-manager/env'
 
 const authenticateWithPassword = (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().post(
@@ -56,7 +57,8 @@ const authenticateWithPassword = (app: FastifyInstance) => {
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
         path: '/',
-        sameSite: 'none',
+        sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
+        secure: env.NODE_ENV === 'production',
         signed: true,
       })
 

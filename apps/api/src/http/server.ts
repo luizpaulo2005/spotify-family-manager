@@ -41,6 +41,7 @@ app.register(fastifyCors, {
   origin: env.WEB_URL,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
 })
 app.register(fastifyCookie, {
   secret: env.COOKIE_SECRET,
@@ -48,7 +49,8 @@ app.register(fastifyCookie, {
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days,
     path: '/',
-    sameSite: 'none',
+    sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
+    secure: env.NODE_ENV === 'production',
   },
 })
 app.register(fastifyJwt, {
@@ -59,7 +61,7 @@ app.register(fastifyJwt, {
   secret: env.JWT_SECRET,
 })
 
-if (process.env.NODE_ENV === 'development') {
+if (env.NODE_ENV === 'development') {
   app.register(logger)
 
   app.register(fastifySwagger, {
@@ -113,7 +115,7 @@ app.register(reversePayment)
 
 app.listen({ port: env.SERVER_PORT, host: env.HOST }).then(() => {
   console.log(`Server is running on http://${env.HOST}:${env.SERVER_PORT}`)
-  if (process.env.NODE_ENV === 'development') {
+  if (env.NODE_ENV === 'development') {
     console.log(
       `API reference available at http://${env.HOST}:${env.SERVER_PORT}/api-reference`,
     )

@@ -115,7 +115,8 @@ const authenticateWithGoogle = (app: FastifyInstance) => {
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
         path: '/',
-        sameSite: 'none',
+        sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
+        secure: env.NODE_ENV === 'production',
         signed: true,
       })
 

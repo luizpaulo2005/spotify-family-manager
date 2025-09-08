@@ -3,6 +3,7 @@ import { z } from 'zod'
 
 const env = createEnv({
   server: {
+    NODE_ENV: z.enum(['development', 'production']).default('development'),
     DATABASE_URL: z.url(),
     SERVER_PORT: z.coerce.number().default(3333),
     WEB_URL: z.url(),
@@ -18,6 +19,7 @@ const env = createEnv({
   },
   shared: {},
   runtimeEnv: {
+    NODE_ENV: process.env.NODE_ENV,
     DATABASE_URL: process.env.DATABASE_URL,
     SERVER_PORT: process.env.SERVER_PORT,
     HOST: process.env.HOST,
