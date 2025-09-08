@@ -1,3 +1,4 @@
+import { env } from '@spotify-family-manager/env'
 import { compare } from 'bcryptjs'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
@@ -5,7 +6,6 @@ import { z } from 'zod'
 
 import { prisma } from '../../../lib/prisma.ts'
 import { BadRequestError } from '../_errors/bad-request-error.ts'
-import { env } from '@spotify-family-manager/env'
 
 const authenticateWithPassword = (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().post(
