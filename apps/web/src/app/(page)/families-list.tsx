@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 
+import { EditFamilyDialog } from '@/components/edit-family-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -275,12 +276,15 @@ const FamiliesList = () => {
                   </Button>
                 )}
                 {userRole === 'admin' && (
-                  <MembersDialog
-                    familyId={family.id}
-                    currentMember={currentMember!}
-                    members={family.members}
-                    invites={family.invites}
-                  />
+                  <>
+                    <EditFamilyDialog family={family} />
+                    <MembersDialog
+                      familyId={family.id}
+                      currentMember={currentMember!}
+                      members={family.members}
+                      invites={family.invites}
+                    />
+                  </>
                 )}
               </div>
             </CardContent>
