@@ -30,6 +30,12 @@ enum PaymentMethod {
   pix
 }
 
+enum PaymentStatus {
+  pending
+  paid
+  reversed
+}
+
 model Family {
   id            String        @id @default(uuid())
   name          String
@@ -69,10 +75,10 @@ model FamilyMember {
 }
 
 model Payment {
-  id       String @id @default(uuid())
+  id       String        @id @default(uuid())
   memberId String
   amount   Float
-  status   String @default("pending")
+  status   PaymentStatus @default(pending)
 
   createdAt DateTime @default(now())
 
