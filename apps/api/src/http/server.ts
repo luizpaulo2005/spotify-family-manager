@@ -32,7 +32,7 @@ import { createPayment } from './routes/payments/create-payment.ts'
 import { getPaymentHistory } from './routes/payments/get-payment-history.ts'
 import { reversePayment } from './routes/payments/reverse-payment.ts'
 
-const app = fastify().withTypeProvider<ZodTypeProvider>()
+const app = fastify({ trustProxy: true }).withTypeProvider<ZodTypeProvider>()
 
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
