@@ -36,13 +36,9 @@ const app = fastify({
   trustProxy: true,
 }).withTypeProvider<ZodTypeProvider>()
 
-// CORS deve ser registrado ANTES de qualquer outra coisa
 app.register(fastifyCors, {
-  origin: true, // Temporariamente permitir todas as origens para teste
+  origin: true,
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'Accept', 'Origin', 'X-Requested-With'],
-  exposedHeaders: ['Set-Cookie'],
 })
 
 app.setSerializerCompiler(serializerCompiler)
