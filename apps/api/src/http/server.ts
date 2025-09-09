@@ -32,38 +32,22 @@ import { createPayment } from './routes/payments/create-payment.ts'
 import { getPaymentHistory } from './routes/payments/get-payment-history.ts'
 import { reversePayment } from './routes/payments/reverse-payment.ts'
 
-const app = fastify({ trustProxy: true }).withTypeProvider<ZodTypeProvider>()
+const app = fastify({ 
+  trustProxy: true,
+}).withTypeProvider<ZodTypeProvider>()
+
+// CORS deve ser registrado ANTES de qualquer outra coisa
+app.register(fastifyCors, {
+  origin: true, // Temporariamente permitir todas as origens para teste
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'Accept', 'Origin', 'X-Requested-With'],
+  exposedHeaders: ['Set-Cookie'],
+})
 
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
 
-app.register(fastifyCors, {
-  origin: (origin, callback) => {
-    // Lista de origens permitidas (incluindo desenvolvimento)
-    const allowedOrigins = [
-      env.WEB_URL, // URL do Vercel
-      'http://localhost:3000', // Desenvolvimento local
-      'http://127.0.0.1:3000', // Desenvolvimento local alternativo
-    ]
-    
-    // Permitir requisições sem origin (mobile apps, Postman, etc.)
-    if (!origin) {
-      callback(null, true)
-      return
-    }
-    
-    // Verificar se a origem está na lista permitida
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true)
-    } else {
-      callback(new Error(`Origin ${origin} not allowed by CORS`), false)
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
-  optionsSuccessStatus: 200,
-})
 app.register(fastifyCookie, {
   secret: env.COOKIE_SECRET,
 })
@@ -104,6 +88,11 @@ if (env.NODE_ENV === 'development') {
 }
 
 app.setErrorHandler(errorHandler)
+
+// Garantir que OPTIONS requests sejam tratadas corretamente
+app.options('*', async (request, reply) => {
+  return reply.status(200).send()
+})
 
 app.register(checkHealth)
 
