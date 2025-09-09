@@ -89,11 +89,6 @@ if (env.NODE_ENV === 'development') {
 
 app.setErrorHandler(errorHandler)
 
-// Garantir que OPTIONS requests sejam tratadas corretamente
-app.options('*', async (request, reply) => {
-  return reply.status(200).send()
-})
-
 app.register(checkHealth)
 
 app.register(authenticateWithPassword)
