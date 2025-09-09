@@ -12,7 +12,8 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { authenticateWithPassword } from '@/http/authenticate-with-password'
+
+import { authenticateWithPasswordAction } from './actions'
 
 const signInSchema = z.object({
   email: z.email({ error: 'Insira um e-mail válido.' }),
@@ -36,17 +37,11 @@ const SignInForm = () => {
 
   const handleLogin = async ({ email, password }: SignInFormProps) => {
     try {
-      const response = await authenticateWithPassword({ email, password })
+      await authenticateWithPasswordAction({ email, password })
 
-      // O cookie já foi definido pelo servidor via response.setCookie
-      // Vamos apenas verificar se recebemos o token na resposta
-      if (response.token) {
-        toast.success('Login realizado com sucesso!')
-        reset()
-        router.replace('/')
-      } else {
-        toast.error('Erro ao realizar login - resposta inválida')
-      }
+      toast.success('Login realizado com sucesso!')
+      reset()
+      router.replace('/')
     } catch (error) {
       if (error instanceof HTTPError) {
         const err = await error.response.json()

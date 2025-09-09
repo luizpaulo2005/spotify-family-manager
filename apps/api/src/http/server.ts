@@ -38,7 +38,6 @@ app.setValidatorCompiler(validatorCompiler)
 
 app.register(fastifyCors, {
   origin: env.WEB_URL,
-  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 })
 app.register(fastifyJwt, {
