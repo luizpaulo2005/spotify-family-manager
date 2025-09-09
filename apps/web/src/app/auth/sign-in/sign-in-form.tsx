@@ -36,18 +36,24 @@ const SignInForm = () => {
 
   const handleLogin = async ({ email, password }: SignInFormProps) => {
     try {
-      await authenticateWithPassword({ email, password })
+      const response = await authenticateWithPassword({ email, password })
 
-      toast.success('Login realizado com sucesso!')
-
-      reset()
-      router.replace('/')
+      // O cookie já foi definido pelo servidor via response.setCookie
+      // Vamos apenas verificar se recebemos o token na resposta
+      if (response.token) {
+        toast.success('Login realizado com sucesso!')
+        reset()
+        router.replace('/')
+      } else {
+        toast.error('Erro ao realizar login - resposta inválida')
+      }
     } catch (error) {
       if (error instanceof HTTPError) {
         const err = await error.response.json()
-
         return toast.error(`Erro ao realizar login. ${err.message}`)
       }
+
+      toast.error('Erro inesperado ao realizar login.')
     }
   }
 
