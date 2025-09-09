@@ -38,10 +38,18 @@ app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
 
 app.register(fastifyCors, {
-  origin: env.WEB_URL,
+  origin: (origin, cb) => {
+    const allowedOrigins = [env.WEB_URL, 'http://localhost:3000'] // Inclua localhost para dev
+    if (!origin || allowedOrigins.includes(origin)) {
+      cb(null, true)
+    } else {
+      cb(new Error('Not allowed by CORS'), false)
+    }
+  },
   credentials: true,
-  methods: ['*'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'Set-Cookie'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+  exposedHeaders: ['Set-Cookie'],
 })
 app.register(fastifyCookie, {
   secret: env.COOKIE_SECRET,
@@ -56,7 +64,7 @@ app.register(fastifyCookie, {
 app.register(fastifyJwt, {
   cookie: {
     cookieName: 'token',
-    signed: false,
+    signed: true,
   },
   secret: env.JWT_SECRET,
 })
