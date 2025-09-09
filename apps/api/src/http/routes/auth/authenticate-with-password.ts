@@ -57,7 +57,7 @@ const authenticateWithPassword = (app: FastifyInstance) => {
         maxAge: 1000 * 60 * 60 * 24 * 7,
         path: '/',
         sameSite: 'none',
-        signed: true,
+        signed: false,
       })
 
       return reply.status(201).send({ token })

@@ -56,7 +56,7 @@ app.register(fastifyCookie, {
 app.register(fastifyJwt, {
   cookie: {
     cookieName: 'token',
-    signed: true,
+    signed: false,
   },
   secret: env.JWT_SECRET,
 })
