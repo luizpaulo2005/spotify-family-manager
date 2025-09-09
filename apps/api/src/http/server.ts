@@ -32,29 +32,31 @@ import { createPayment } from './routes/payments/create-payment.ts'
 import { getPaymentHistory } from './routes/payments/get-payment-history.ts'
 import { reversePayment } from './routes/payments/reverse-payment.ts'
 
-const app = fastify({ 
-  trustProxy: true,
-}).withTypeProvider<ZodTypeProvider>()
-
-// CORS deve ser registrado ANTES de qualquer outra coisa
-app.register(fastifyCors, {
-  origin: true, // Temporariamente permitir todas as origens para teste
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'Accept', 'Origin', 'X-Requested-With'],
-  exposedHeaders: ['Set-Cookie'],
-})
+const app = fastify().withTypeProvider<ZodTypeProvider>()
 
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
 
+app.register(fastifyCors, {
+  origin: env.WEB_URL,
+  credentials: true,
+  methods: ['*'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'Set-Cookie'],
+})
 app.register(fastifyCookie, {
   secret: env.COOKIE_SECRET,
+  parseOptions: {
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days,
+    path: '/',
+    sameSite: 'none',
+    secure: true,
+  },
 })
 app.register(fastifyJwt, {
   cookie: {
     cookieName: 'token',
-    signed: false,
+    signed: true,
   },
   secret: env.JWT_SECRET,
 })

@@ -52,18 +52,13 @@ const authenticateWithPassword = (app: FastifyInstance) => {
         { sign: { expiresIn: '7d' } },
       )
 
-      // Configurações de cookie otimizadas para Vercel + Render
-      const cookieOptions = {
+      reply.setCookie('token', token, {
         httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+        maxAge: 1000 * 60 * 60 * 24 * 7,
         path: '/',
-        signed: false,
-        // Para cross-origin (Vercel + Render), sempre usar sameSite: 'none' com secure
-        sameSite: 'none' as const,
-        secure: true, // Sempre true para HTTPS em produção
-      }
-
-      reply.setCookie('token', token, cookieOptions)
+        sameSite: 'none',
+        signed: true,
+      })
 
       return reply.status(201).send({ token })
     },
