@@ -1,5 +1,5 @@
 import { env } from '@spotify-family-manager/env'
-import { type CookiesFn, getCookie } from 'cookies-next'
+import { type CookiesFn, deleteCookie, getCookie } from 'cookies-next'
 import ky from 'ky'
 
 const api = ky.create({
@@ -20,6 +20,19 @@ const api = ky.create({
         if (token) {
           request.headers.set('Authorization', `Bearer ${token}`)
         }
+      },
+    ],
+    afterResponse: [
+      async (request, options, response) => {
+        if (response.status === 401) {
+          if (typeof window !== 'undefined') {
+            deleteCookie('token')
+
+            window.location.reload()
+          }
+        }
+
+        return response
       },
     ],
   },
