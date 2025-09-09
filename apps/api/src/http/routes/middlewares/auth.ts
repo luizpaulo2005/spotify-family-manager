@@ -4,19 +4,14 @@ import fastifyPlugin from 'fastify-plugin'
 import { UnauthorizedError } from '../_errors/unauthorized-error.ts'
 
 const auth = fastifyPlugin(async (app: FastifyInstance) => {
-  app.addHook('preHandler', async (request, reply) => {
+  app.addHook('preHandler', async (request) => {
     request.getCurrentUserId = async () => {
       try {
-        const { sub } = await request.jwtVerify<{ sub: string }>({
-          onlyCookie: true,
-        })
+        const { sub } = await request.jwtVerify<{ sub: string }>()
 
         return sub
       } catch {
-        // reply.clearCookie('token', { path: '/' })
-        // throw new UnauthorizedError('Token inválido.')
-
-        return "OK"
+        throw new UnauthorizedError('Token inválido.')
       }
     }
   })
